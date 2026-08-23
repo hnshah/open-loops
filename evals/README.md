@@ -32,6 +32,7 @@ The repository does not claim a current model benchmark score. Fixture counts an
 - partial evidence
 - disposition and ranking
 - pairwise attention preferences
+- side-reversal stability
 
 ## Trigger fixtures
 
@@ -122,11 +123,32 @@ A pairwise answer can conflict with the ordering of analogous items inside a lar
 
 The benchmark should use pairwise calibration to form hypotheses and test ranking stability, not to pretend one reviewer has revealed a permanent mathematical priority function.
 
+Batch 4 reversed the presentation order of six earlier pairwise comparisons. All six preferences survived the reversal. See [`stability-batch-4.md`](stability-batch-4.md).
+
 Validate pairwise fixtures with
 
 ```bash
 python3 evals/validate_pairwise.py
 ```
+
+## Blind model runs
+
+Never evaluate a model by handing it `cases.jsonl` with the expected answers intact.
+
+Export a gold-free case set with
+
+```bash
+python3 evals/export_blind_cases.py > /tmp/open-loops-blind-cases.jsonl
+```
+
+Then run the model in a fresh context and freeze its predictions before scoring.
+
+The recommended first comparison is the same model under two conditions:
+
+1. baseline without the skill
+2. Open Loops with the exact skill version installed
+
+See [`BLIND_RUN.md`](BLIND_RUN.md) for the full protocol, including Claude-first isolation requirements.
 
 ## Validate the fixtures
 
