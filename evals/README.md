@@ -14,6 +14,18 @@ A technically valid but low-value result can still be noise, so real-world testi
 
 The repository does not claim a current benchmark score. Fixture counts and suite metadata live in `benchmark-manifest.json`.
 
+## Human-reviewed gold calibration
+
+`human-reviewed.jsonl` records explicit human judgments on ambiguous benchmark cases.
+
+Calibration uses three labels:
+
+- `main` — deserves a primary Open Loops slot now
+- `watching` — preserve outside the primary list as Watching or Probably fine
+- `suppress` — do not retain as meaningful open-loop state for this scan
+
+The original synthetic fixture remains useful as the authored hypothesis. When a human-reviewed label differs, the reviewed label is the current gold product judgment. This keeps disagreements inspectable instead of silently rewriting history.
+
 ## Eval families
 
 - trigger and near-neighbor routing
@@ -101,13 +113,13 @@ python3 evals/score_predictions.py predictions.jsonl
 
 The deterministic scorer measures obligation classification, state accuracy, false positives, misses, and duplicate overproduction when the prediction format includes repeated anchors.
 
-It does not pretend to solve subjective importance grading. Human or rubric-judge review is still needed for ranking quality and next-step usefulness.
+It does not pretend to solve subjective importance grading or Watching calibration. Human or rubric-judge review is still needed for ranking quality, secondary-state placement, and next-step usefulness.
 
 ## Real-world dogfood protocol
 
 1. Run on one real source and a seven-day lookback.
 2. Grade the top five manually.
-3. Record every false positive, miss, wrong owner, wrong completion judgment, and bad rank.
+3. Record every false positive, miss, wrong owner, wrong completion judgment, bad rank, and bad Watching decision.
 4. Sanitize each failure into the smallest synthetic case.
 5. Re-run the same case after every behavior change.
 6. Add cross-source access only after single-source precision is acceptable.
