@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import argparse
 import json
-import sys
 
 ROOT = Path(__file__).resolve().parent
 CASES_PATH = ROOT / "cases.jsonl"
 REVIEW_PATH = ROOT / "human-reviewed.jsonl"
 
-if len(sys.argv) != 2:
-    print("usage: python3 evals/score_calibrated.py predictions.jsonl")
-    sys.exit(2)
+parser = argparse.ArgumentParser()
+parser.add_argument("predictions", type=Path)
+parser.add_argument(
+    "--only-predicted",
+    action="store_true",
+    help="Score only case IDs present in the prediction file. Use for smoke tests or deliberate subsets.",
+)
+args = parser.parse_args()
 
-pred_path = Path(sys.argv[1])
+pred_path = args.predictions
 if not pred_path.exists():
-    print(f"predictions file not found: {pred_path}")
-    sys.exit(2)
+    raise SystemExit(f"predictions file not found: {pred_path}")
 
 cases = {}
 for raw in CASES_PATH.read_text(encoding="utf-8").splitlines():
@@ -38,9 +42,21 @@ for line_no, raw in enumerate(pred_path.read_text(encoding="utf-8").splitlines()
         continue
     item = json.loads(raw)
     cid = item.get("case_id")
+    if not cid:
+        raise SystemExit(f"missing case_id on prediction line {line_no}")
+    if cid not in cases:
+        raise SystemExit(f"unknown prediction case_id {cid} on line {line_no}")
     if cid in preds:
         raise SystemExit(f"duplicate prediction for {cid} on line {line_no}")
     preds[cid] = item
+
+if args.only_predicted and not preds:
+    raise SystemExit("--only-predicted requires at least one prediction")
+
+if args.only_predicted:
+    scored_case_ids = [cid for cid in cases if cid in preds]
+else:
+    scored_case_ids = list(cases)
 
 main_tp = main_fp = main_fn = 0
 retained_tp = retained_fp = retained_fn = 0
@@ -48,7 +64,9 @@ disposition_ok = disposition_total = 0
 state_ok = state_total = 0
 missing_cases = []
 
-for cid, case in cases.items():
+for cid in scored_case_ids:
+    case = cases[cid]
+
     # Build anchor-level synthetic gold first.
     gold = {}
     expected_by_anchor = {}
@@ -123,10 +141,16 @@ main_f1 = ratio(2 * main_precision * main_recall, main_precision + main_recall, 
 retained_precision = ratio(retained_tp, retained_tp + retained_fp)
 retained_recall = ratio(retained_tp, retained_tp + retained_fn)
 disposition_acc = ratio(disposition_ok, disposition_total)
+active_overrides = sum(1 for cid in scored_case_ids if cid in case_review)
 
-print(f"cases: {len(cases)}")
+print(f"available cases: {len(cases)}")
+print(f"scored cases: {len(scored_case_ids)}")
 print(f"predicted cases: {len(preds)}")
-print(f"human-reviewed independent overrides: {len(case_review)}")
+print(f"human-reviewed overrides in scored set: {active_overrides}")
+if args.only_predicted:
+    print("scope: predicted subset only")
+else:
+    print("scope: full benchmark")
 print(f"main precision: {main_precision:.3f}")
 print(f"main recall: {main_recall:.3f}")
 print(f"main f1: {main_f1:.3f}")
