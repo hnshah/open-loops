@@ -131,6 +131,10 @@ def main() -> int:
     parser.add_argument("--raw-out", help="optional raw Claude output JSONL path")
     parser.add_argument("--model", help="optional Claude Code model selector")
     parser.add_argument("--limit", type=int, default=0, help="run only the first N cases; 0 means all")
+    parser.add_argument(
+        "--case-ids",
+        help="optional comma-separated case IDs to run in the supplied order; cannot be combined with --limit",
+    )
     args = parser.parse_args()
 
     if shutil.which("claude") is None:
@@ -139,9 +143,26 @@ def main() -> int:
     if args.condition == "skill" and not SKILL_PATH.exists():
         print(f"skill directory not found: {SKILL_PATH}", file=sys.stderr)
         return 2
+    if args.case_ids and args.limit:
+        print("--case-ids cannot be combined with --limit", file=sys.stderr)
+        return 2
 
     cases = list(blind_cases())
-    if args.limit:
+    if args.case_ids:
+        requested = [value.strip() for value in args.case_ids.split(",") if value.strip()]
+        if not requested:
+            print("--case-ids must contain at least one case ID", file=sys.stderr)
+            return 2
+        by_id = {case["case_id"]: case for case in cases}
+        unknown = [cid for cid in requested if cid not in by_id]
+        if unknown:
+            print(f"unknown case IDs: {', '.join(unknown)}", file=sys.stderr)
+            return 2
+        if len(requested) != len(set(requested)):
+            print("--case-ids cannot contain duplicates", file=sys.stderr)
+            return 2
+        cases = [by_id[cid] for cid in requested]
+    elif args.limit:
         cases = cases[: args.limit]
 
     out_path = Path(args.out)
