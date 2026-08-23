@@ -41,9 +41,29 @@ Rules:
 - Do not invent source IDs.
 - Do not include prose outside the JSON object when running a machine-scored benchmark.
 
+## Fastest Claude-first comparison
+
+The repository includes a wrapper that runs both conditions and scores them.
+
+Smoke test five cases:
+
+```bash
+LIMIT=5 CLAUDE_MODEL=opus bash evals/run_claude_compare.sh
+```
+
+Full 64-case comparison:
+
+```bash
+CLAUDE_MODEL=opus bash evals/run_claude_compare.sh
+```
+
+Claude Code accepts `opus` as an alias for the latest Opus model. Pin a full model name instead when you need an immutable published result.
+
+The wrapper writes predictions and raw outputs under `/tmp/open-loops-benchmark` by default. Override with `OUT_DIR=/path/to/results`.
+
 ## Claude Code harness
 
-The repository includes an isolated Claude Code runner. It starts one fresh `claude -p` process per case in a temporary directory that does not contain the answer key.
+The underlying isolated runner starts one fresh `claude -p` process per case in a temporary directory that does not contain the answer key.
 
 Baseline:
 
