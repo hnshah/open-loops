@@ -1,0 +1,20 @@
+{
+  "name": "open-loops",
+  "interface": {
+    "displayName": "Open Loops"
+  },
+  "plugins": [
+    {
+      "name": "open-loops",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

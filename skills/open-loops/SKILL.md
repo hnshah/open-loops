@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires access to at least one authorized work source such as email, chat, calendar, meeting notes, files, or a project system.
 metadata:
   author: hnshah
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Open Loops
@@ -34,6 +34,8 @@ Before a full scan, read these references only when needed.
 - Read `references/source-capabilities.md` when choosing tools or degrading to a smaller source scope.
 - Read `references/feedback-and-learning.md` when the user corrects a result or asks the skill to remember preferences.
 - Read `references/approval-boundaries.md` before any step that could create an external side effect.
+- Read `references/routine-mode.md` when the user asks to repeat the scan or turn it into a routine.
+- Read `references/state-ledger.md` when the runtime supports durable state and continuity would help.
 
 ## Default scope
 
@@ -209,6 +211,10 @@ Examples
 Apply the correction immediately. If the runtime supports durable memory or local files and the user wants the rule remembered, follow `references/feedback-and-learning.md`.
 
 Keep universal reasoning rules separate from user-specific preferences.
+
+### 10. Add continuity only after the scan earns it
+
+Do not recommend or create recurring ownership merely because the host supports routines. Use `references/routine-mode.md` after several one-time runs are useful. If durable state is appropriate, keep it lightweight and follow `references/state-ledger.md`.
 
 ## Refuse or degrade cleanly
 

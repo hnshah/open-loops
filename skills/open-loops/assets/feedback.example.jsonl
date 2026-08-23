@@ -1,0 +1,2 @@
+{"candidate_id":"loop_001","classification":"true_positive","importance":"high","reason":"Explicit promise with deadline","user_feedback":"Should have ranked first","timestamp":"2026-08-22T16:00:00Z"}
+{"candidate_id":"loop_002","classification":"false_positive","importance":"low","reason":"Casual social language was mistaken for a commitment","user_feedback":"Do not surface casual coffee messages","timestamp":"2026-08-22T16:01:00Z"}

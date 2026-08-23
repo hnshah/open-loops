@@ -1,5 +1,7 @@
 # Open Loops
 
+[![validate](https://github.com/hnshah/open-loops/actions/workflows/validate.yml/badge.svg)](https://github.com/hnshah/open-loops/actions/workflows/validate.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **Find the important things that are about to fall through the cracks.**
 
 Your work creates commitments everywhere.
@@ -30,6 +32,15 @@ Open Loops is deliberately conservative.
 The intended reaction is simple.
 
 > **I actually forgot about that.**
+
+## Start here
+
+- **Try it:** install the skill and run the seven-day scan below.
+- **Understand the idea:** read [`docs/why-open-loops.md`](docs/why-open-loops.md).
+- **Understand the technical center:** read [`docs/state-reconstruction.md`](docs/state-reconstruction.md).
+- **Implement a host adapter:** read [`docs/architecture.md`](docs/architecture.md) and [`docs/source-adapter-contract.md`](docs/source-adapter-contract.md).
+- **Test it:** read [`docs/benchmark-methodology.md`](docs/benchmark-methodology.md) and [`docs/testing-protocol.md`](docs/testing-protocol.md).
+- **Contribute a failure:** use the issue templates or [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Try it
 
@@ -70,6 +81,10 @@ cp -R skills/open-loops ~/.agents/skills/open-loops
 ### Claude.ai or another upload-based host
 
 Zip the `skills/open-loops` directory and upload that skill folder through the host's skill UI.
+
+Create a clean installable zip with `python3 scripts/package_skill.py`.
+
+See [`docs/compatibility.md`](docs/compatibility.md) for the portability model, host wrappers, and validation standard.
 
 ## What the skill does
 
@@ -264,7 +279,7 @@ python3 evals/validate_cases.py
 
 The benchmark is intentionally synthetic. Do not submit private inbox or Slack data. If you find a failure, sanitize it into the smallest possible case.
 
-See [`evals/README.md`](evals/README.md).
+See [`evals/README.md`](evals/README.md), [`docs/benchmark-methodology.md`](docs/benchmark-methodology.md), and the currently unclaimed [`evals/HOST_MATRIX.md`](evals/HOST_MATRIX.md).
 
 ## Contributing failures
 
@@ -301,39 +316,40 @@ The public wedge stays narrow on purpose.
 ```text
 open-loops/
 ├── README.md
+├── VERSION
 ├── AGENTS.md
+├── GOVERNANCE.md
+├── CODE_OF_CONDUCT.md
 ├── LICENSE
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── SECURITY.md
 ├── PRIVACY.md
+├── .claude-plugin/              # thin distribution metadata
+├── .codex-plugin/               # thin distribution metadata
+├── .agents/plugins/             # thin cross-agent metadata
 ├── skills/
 │   └── open-loops/
-│       ├── SKILL.md
+│       ├── SKILL.md             # canonical behavior
 │       ├── agents/
 │       │   └── openai.yaml
-│       └── references/
-│           ├── what-is-an-open-loop.md
-│           ├── judgment-rules.md
-│           ├── evidence-rules.md
-│           ├── completion-detection.md
-│           ├── source-capabilities.md
-│           ├── feedback-and-learning.md
-│           └── approval-boundaries.md
-├── evals/
-│   ├── README.md
-│   ├── triggers.jsonl
-│   ├── cases.jsonl
-│   ├── rubric.md
-│   ├── validate_triggers.py
-│   ├── validate_cases.py
-│   └── score_predictions.py
-├── examples/
-│   ├── demo.md
-│   └── multi-source.md
-└── scripts/
-    └── validate_repo.py
+│       ├── references/          # progressive-disclosure judgment rules
+│       └── assets/              # routine, brief, feedback, ledger templates
+├── docs/                        # public method and architecture
+│   └── adr/                     # durable product decisions
+├── schemas/                     # optional adapter / runner contracts
+├── evals/                       # triggers, state cases, rubric, scorecards
+├── examples/                    # single- and multi-source walkthroughs
+└── scripts/                     # validation, portability, packaging
 ```
+
+The skill is the product behavior. The rest of the repository makes that behavior understandable, testable, portable, and safe to improve.
+
+## Documentation map
+
+The README is the front door. The deeper method lives in [`docs/`](docs/README.md), including architecture, state reconstruction, source adapters, benchmarking, testing, routine mode, portability, the agent-job framework, FAQ, roadmap, and architecture decision records.
+
+Structured integration contracts live in [`schemas/`](schemas/README.md).
 
 ## What is not proven yet
 
@@ -349,7 +365,7 @@ Every real failure should become a sanitized fixture before the public method ge
 
 ## Status
 
-**v0.1.0 is an experiment.**
+**v0.2.0 is still an experiment.**
 
 The public question is whether an agent can reliably reconstruct important unfinished work with enough precision that people choose to run it again.
 

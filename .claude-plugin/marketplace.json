@@ -1,0 +1,15 @@
+{
+  "name": "open-loops",
+  "metadata": {
+    "description": "Find important unresolved commitments, requests, decisions, dependencies, follow-ups, and preparation work across authorized sources. Search for closure before surfacing, rank conservatively, attach evidence, and keep external writes approval-gated."
+  },
+  "owner": {
+    "name": "Hiten Shah"
+  },
+  "plugins": [
+    {
+      "name": "open-loops",
+      "source": "./"
+    }
+  ]
+}

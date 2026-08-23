@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hnshah/open-loops/schemas/prediction.schema.json",
+  "title": "Open Loops Eval Prediction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "open"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string"
+    },
+    "open": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "anchor",
+          "state"
+        ],
+        "properties": {
+          "anchor": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}

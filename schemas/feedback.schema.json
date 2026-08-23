@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hnshah/open-loops/schemas/feedback.schema.json",
+  "title": "Open Loops Feedback",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "classification",
+    "timestamp"
+  ],
+  "properties": {
+    "candidate_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "true_positive",
+        "false_positive",
+        "false_negative",
+        "already_completed",
+        "duplicate",
+        "ownership_error",
+        "timing_error",
+        "importance_error",
+        "action_error",
+        "personalization_error"
+      ]
+    },
+    "importance": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        null
+      ]
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_feedback": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
