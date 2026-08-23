@@ -1,0 +1,26 @@
+name: Ranking failure
+description: Open Loops found the right items but ordered them badly
+title: "[ranking] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic placeholders only. Keep the case focused on the ranking decision.
+  - type: textarea
+    id: candidates
+    attributes:
+      label: Synthetic candidate set
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed ranking
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Better ranking and why
+    validations:
+      required: true

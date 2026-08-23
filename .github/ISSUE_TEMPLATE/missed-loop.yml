@@ -1,0 +1,26 @@
+name: Missed loop
+description: Open Loops missed something important that was still unresolved
+title: "[missed loop] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic placeholders only. Do not paste private work data.
+  - type: textarea
+    id: synthetic_case
+    attributes:
+      label: Synthetic case
+      description: Recreate the minimum source sequence needed to show the missed obligation.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected open loop
+    validations:
+      required: true
+  - type: textarea
+    id: why_matters
+    attributes:
+      label: Why it matters
+      description: Explain why this was important enough to deserve the main list.

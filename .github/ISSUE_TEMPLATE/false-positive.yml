@@ -1,0 +1,30 @@
+name: False positive
+description: Open Loops surfaced something it should have ignored
+title: "[false positive] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic placeholders only. Do not paste private inbox, Slack, calendar, CRM, or customer data.
+  - type: textarea
+    id: synthetic_case
+    attributes:
+      label: Synthetic case
+      description: Recreate the smallest version of the source sequence that produced the false positive.
+      placeholder: |
+        Mon 9:00 You -> Pat: "..."
+        Tue 10:00 Pat -> You: "..."
+    validations:
+      required: true
+  - type: textarea
+    id: wrong_output
+    attributes:
+      label: What Open Loops surfaced
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What it should have done instead
+    validations:
+      required: true

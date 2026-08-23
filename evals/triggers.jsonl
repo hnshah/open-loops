@@ -1,0 +1,26 @@
+{"id":"trigger_001","text":"Find my important open loops from the last seven days.","should_trigger":true,"reason":"Direct core job."}
+{"id":"trigger_002","text":"What have I said I would do that I still haven't done?","should_trigger":true,"reason":"User-owned unresolved commitments."}
+{"id":"trigger_003","text":"What am I waiting on from other people?","should_trigger":true,"reason":"Waiting-on loops."}
+{"id":"trigger_004","text":"Anything important I forgot to follow up on this week?","should_trigger":true,"reason":"Unresolved follow-up scan."}
+{"id":"trigger_005","text":"Look through my email and tell me what is at risk of falling through the cracks.","should_trigger":true,"reason":"Core job with a named source."}
+{"id":"trigger_006","text":"Which introductions still need a reply from me?","should_trigger":true,"reason":"Response-expected subset of open loops."}
+{"id":"trigger_007","text":"Scan Slack for commitments that still look unfinished.","should_trigger":true,"reason":"Source-specific unresolved commitment scan."}
+{"id":"trigger_008","text":"Do I owe any customers something right now?","should_trigger":true,"reason":"User-owned obligations with relationship filter."}
+{"id":"trigger_009","text":"What promises did people make to me that are overdue?","should_trigger":true,"reason":"Waiting-on obligations."}
+{"id":"trigger_010","text":"Check what from last week's meetings still needs resolution.","should_trigger":true,"reason":"Meeting-derived open loops."}
+{"id":"trigger_011","text":"What should I prepare before my important meetings this week based on recent conversations?","should_trigger":true,"reason":"Preparation loops grounded in communication plus calendar."}
+{"id":"trigger_012","text":"Find unresolved decisions that are blocking work.","should_trigger":true,"reason":"Decision and dependency loops."}
+{"id":"trigger_013","text":"Did I leave any customer questions unanswered?","should_trigger":true,"reason":"Response-required loops."}
+{"id":"trigger_014","text":"Show me the five unfinished obligations that matter most.","should_trigger":true,"reason":"High-precision core output."}
+{"id":"trigger_015","text":"Check whether the things I promised last week were actually completed.","should_trigger":true,"reason":"Completion detection over commitments."}
+{"id":"trigger_016","text":"What conversations still need closure?","should_trigger":true,"reason":"Broad but still squarely unresolved work."}
+{"id":"trigger_017","text":"Make me a complete task list for this project.","should_trigger":false,"reason":"Generic exhaustive project planning is outside the wedge."}
+{"id":"trigger_018","text":"Help me prioritize my Linear backlog.","should_trigger":false,"reason":"Backlog prioritization is project management, not implicit open-loop reconstruction."}
+{"id":"trigger_019","text":"Get me to inbox zero.","should_trigger":false,"reason":"Inbox management is explicitly out of scope."}
+{"id":"trigger_020","text":"Summarize all emails from this week.","should_trigger":false,"reason":"Generic summarization does not imply unresolved obligations."}
+{"id":"trigger_021","text":"Draft a reply to Sarah's email.","should_trigger":false,"reason":"Single known writing task does not require an open-loop scan."}
+{"id":"trigger_022","text":"Plan my week and block my calendar.","should_trigger":false,"reason":"Scheduling and planning are neighboring jobs."}
+{"id":"trigger_023","text":"What are my top goals for Q4?","should_trigger":false,"reason":"Goal setting is not unfinished commitment detection."}
+{"id":"trigger_024","text":"Turn these meeting notes into action items.","should_trigger":false,"reason":"Action-item extraction alone is deliberately narrower than the Open Loops state-reconstruction job."}
+{"id":"trigger_025","text":"Remind me tomorrow to send the deck.","should_trigger":false,"reason":"A known reminder request does not require discovery or state reconstruction."}
+{"id":"trigger_026","text":"Search my files for the latest launch brief.","should_trigger":false,"reason":"File retrieval is a preparation action, not the discovery job by itself."}

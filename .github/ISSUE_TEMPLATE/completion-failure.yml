@@ -1,0 +1,29 @@
+name: Completion failure
+description: Open Loops treated a resolved item as open or an open item as resolved
+title: "[completion] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic placeholders only. Include the obligation event and the later evidence that should change its state.
+  - type: textarea
+    id: synthetic_case
+    attributes:
+      label: Synthetic obligation and later evidence
+    validations:
+      required: true
+  - type: dropdown
+    id: failure_type
+    attributes:
+      label: Failure type
+      options:
+        - Surfaced something already resolved
+        - Closed something that was still open
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected judgment
+    validations:
+      required: true

@@ -1,0 +1,14 @@
+# Local Open Loops state
+.open-loops/
+open-loops-feedback.jsonl
+
+# Local skill installers
+.agents/
+skills-lock.json
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
