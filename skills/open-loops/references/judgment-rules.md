@@ -70,6 +70,14 @@ A direct promise, question, or near-term obligation to an external counterparty 
 
 This is a useful signal, not a universal law. User corrections should determine how heavily it matters for a particular person.
 
+### Ownership
+
+Distinguish work the user personally owes from work the user is merely waiting to receive.
+
+Both can matter, but a direct user-owned obligation often creates a stronger reason to interrupt because the next move is under the user's control.
+
+Treat this as a tendency to test, not a hard-coded universal preference.
+
 ### Recency
 
 Recent obligations often matter more, but recency alone should not outrank consequence.
@@ -77,6 +85,25 @@ Recent obligations often matter more, but recency alone should not outrank conse
 ### Preparation burden
 
 Items requiring work before a near-term event deserve earlier attention than easy replies when delay would create risk.
+
+## Rank contextually, not mechanically
+
+The dimensions above do not combine into one permanent total order.
+
+When several Main candidates are close, compare the strongest contenders directly rather than pretending a fixed numeric score can settle every case.
+
+A direct pairwise judgment can disagree with the order those same kinds of items received inside a larger candidate set. Preserve that tension.
+
+Do not immediately turn one comparison into a universal rule such as "customer always beats internal" or "urgency always beats consequence."
+
+Instead look for repeated evidence across:
+
+- different wording
+- reversed left/right presentation
+- different surrounding candidate sets
+- repeated real runs
+
+Only promote a preference into a durable personal rule after it proves stable enough to be useful.
 
 ## Priority pattern
 
@@ -86,7 +113,7 @@ A useful mental model is
 priority is driven by importance × open-state confidence × urgency
 ```
 
-Then apply context around consequence, dependency, relationship significance, and explicit user preferences.
+Then apply context around consequence, dependency, relationship significance, ownership, external expectation, and explicit user preferences.
 
 Treat this as a reasoning aid, not a numeric score.
 

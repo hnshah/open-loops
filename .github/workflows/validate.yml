@@ -21,5 +21,6 @@ jobs:
       - run: python3 evals/validate_triggers.py
       - run: python3 evals/validate_cases.py
       - run: python3 evals/validate_rankings.py
+      - run: python3 evals/validate_pairwise.py
       - run: python3 scripts/package_skill.py --check
       - run: python3 -m compileall -q scripts evals

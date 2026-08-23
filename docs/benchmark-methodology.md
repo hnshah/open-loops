@@ -12,7 +12,7 @@ A case can require the model to identify an obligation, find later closure, infe
 
 ## Public benchmark units
 
-The public suite has three fixture types.
+The public suite has four fixture types.
 
 ### Trigger fixtures
 
@@ -40,6 +40,22 @@ This matters because a rank-six Main candidate is not the same thing as a Watchi
 
 `evals/ranking-scenarios.jsonl` stores human-reviewed mixed candidate sets. `evals/human-reviewed.jsonl` stores the underlying calibration judgments.
 
+### Pairwise attention preferences
+
+`evals/pairwise-preferences.jsonl` isolates two candidates and asks which deserves attention first.
+
+Use pairwise review to test hypotheses about ranking dimensions such as:
+
+- urgency
+- ownership
+- external expectation
+- customer significance
+- dependency severity
+- consequence
+- preparation burden
+
+Pairwise review is especially useful when a mixed ranking set contains several confounded dimensions.
+
 ## Human calibration before model scoring
 
 Do not assume synthetic gold labels are correct merely because they were written first.
@@ -54,7 +70,37 @@ Before treating subjective cases as benchmark truth:
 
 For ranking, ask the reviewer to order a mixed candidate set under a fixed display limit and separately mark Watching or Suppress candidates.
 
+Then use pairwise comparisons to isolate the dimensions that may explain the ranking.
+
 This surfaces the user's actual attention policy instead of forcing all unresolved work into a binary open/closed frame.
+
+## Ranking may be contextual
+
+Do not assume one reviewer has a single stable global ordering over every possible obligation.
+
+The same two analogous items can reverse order when judged inside a ten-item set versus directly against each other. That is useful evidence, not necessarily reviewer error.
+
+Possible causes include:
+
+- attention-budget effects
+- framing and wording
+- context supplied by neighboring candidates
+- salience
+- uncertainty about consequence
+- genuine non-transitive or situational preferences
+
+Preserve these conflicts in the benchmark.
+
+Do not silently rewrite the earlier review, average the judgments into a fake scalar weight, or force transitivity merely to make the dataset tidy.
+
+Instead:
+
+1. flag the conflict
+2. rerun the pair with wording and side order varied
+3. test the pair inside a second mixed context
+4. infer a durable rule only after repeated evidence agrees
+
+A ranking policy should be learned as a set of tested behavioral tendencies, not invented as a universal mathematical score.
 
 ## Primary real-world metrics
 
@@ -92,6 +138,12 @@ For mixed candidate sets, measure top-k overlap and pairwise ordering agreement 
 
 Do not turn ranking agreement into fake universal importance. It is evidence about how well the system matches a reviewed attention policy.
 
+### Pairwise preference agreement
+
+For direct comparisons, measure how often the system chooses the same candidate as the reviewed preference.
+
+Report stability separately when repeated or rephrased comparisons exist.
+
 ### Action usefulness
 
 Was the proposed next step and preparation offer actually useful?
@@ -118,6 +170,7 @@ A credible benchmark report should include:
 - structured prediction format
 - human grading protocol for importance
 - human calibration source for ranking scenarios
+- pairwise calibration source when ranking preferences are tested
 - known limitations
 
 Use [`../evals/HOST_MATRIX.md`](../evals/HOST_MATRIX.md) as the public record of validated configurations.
@@ -146,6 +199,7 @@ Do not:
 - tune against the entire public suite and present it as held-out performance
 - compare hosts with radically different source access without disclosure
 - treat rank > display limit as equivalent to Watching
+- force inconsistent human ranking judgments into a fake universal score
 - turn subjective importance judgments into fake decimal precision
 
 The benchmark exists to make the method falsifiable and regression-safe. It is not marketing decoration.

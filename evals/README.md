@@ -31,6 +31,7 @@ The repository does not claim a current model benchmark score. Fixture counts an
 - cross-source resolution
 - partial evidence
 - disposition and ranking
+- pairwise attention preferences
 
 ## Trigger fixtures
 
@@ -107,6 +108,24 @@ Validate ranking scenarios with
 
 ```bash
 python3 evals/validate_rankings.py
+```
+
+## Pairwise attention calibration
+
+`pairwise-preferences.jsonl` isolates two candidates at a time and asks which deserves attention first.
+
+Pairwise review helps identify which dimensions actually drive ranking, such as urgency, ownership, customer significance, dependency severity, and external expectation.
+
+It also exposes an important failure mode in benchmark design: **human ranking may be context-dependent rather than a perfectly stable global ordering.**
+
+A pairwise answer can conflict with the ordering of analogous items inside a larger mixed set. Preserve that conflict. Do not silently force transitivity or convert one judgment into a universal weight.
+
+The benchmark should use pairwise calibration to form hypotheses and test ranking stability, not to pretend one reviewer has revealed a permanent mathematical priority function.
+
+Validate pairwise fixtures with
+
+```bash
+python3 evals/validate_pairwise.py
 ```
 
 ## Validate the fixtures
