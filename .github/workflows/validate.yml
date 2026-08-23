@@ -22,5 +22,6 @@ jobs:
       - run: python3 evals/validate_cases.py
       - run: python3 evals/validate_rankings.py
       - run: python3 evals/validate_pairwise.py
+      - run: python3 evals/export_blind_cases.py > /tmp/open-loops-blind-cases.jsonl && test "$(wc -l < /tmp/open-loops-blind-cases.jsonl)" -eq 64
       - run: python3 scripts/package_skill.py --check
       - run: python3 -m compileall -q scripts evals
