@@ -1,0 +1,37 @@
+{
+  "name": "open-loops",
+  "description": "Find important unresolved commitments, requests, decisions, dependencies, follow-ups, and preparation work across authorized sources. Search for closure before surfacing, rank conservatively, attach evidence, and keep external writes approval-gated.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Hiten Shah",
+    "url": "https://github.com/hnshah"
+  },
+  "homepage": "https://github.com/hnshah/open-loops",
+  "repository": "https://github.com/hnshah/open-loops",
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "productivity",
+    "follow-up",
+    "commitments",
+    "state-reconstruction",
+    "open-loops"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Open Loops",
+    "shortDescription": "Find the few important unfinished obligations that still need attention.",
+    "longDescription": "Find important unresolved commitments, requests, decisions, dependencies, follow-ups, and preparation work across authorized sources. Search for closure before surfacing, rank conservatively, attach evidence, and keep external writes approval-gated.",
+    "developerName": "Hiten Shah",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "websiteURL": "https://github.com/hnshah/open-loops",
+    "defaultPrompt": [
+      "Find my important open loops from the last seven days.",
+      "What am I waiting on that should have happened by now?",
+      "What important follow-ups may be falling through the cracks?"
+    ]
+  }
+}

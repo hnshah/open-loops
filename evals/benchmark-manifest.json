@@ -1,0 +1,10 @@
+{
+  "name": "open-loops-public-benchmark",
+  "version": "0.2.0",
+  "case_file": "cases.jsonl",
+  "trigger_file": "triggers.jsonl",
+  "expected_case_count": 64,
+  "expected_trigger_count": 26,
+  "primary_real_world_metric": "Precision@5",
+  "notes": "Synthetic regression suite. Not a model-performance claim."
+}

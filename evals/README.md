@@ -12,7 +12,7 @@ The cases are synthetic and designed to expose state-reconstruction failures.
 
 A technically valid but low-value result can still be noise, so real-world testing should also track Importance@5.
 
-The repository does not claim a current benchmark score.
+The repository does not claim a current benchmark score. Fixture counts and suite metadata live in `benchmark-manifest.json`.
 
 ## Eval families
 
@@ -114,3 +114,9 @@ It does not pretend to solve subjective importance grading. Human or rubric-judg
 7. Add routine execution only after several one-time runs are useful.
 
 Every important failure should become an eval before it becomes another paragraph of instructions.
+
+## Host/model validation
+
+Use [`HOST_MATRIX.md`](HOST_MATRIX.md) to record configurations that have actually been tested. Use [`REAL_WORLD_SCORECARD.md`](REAL_WORLD_SCORECARD.md) for manual dogfood grading.
+
+The benchmark methodology and reporting standard are documented in [`../docs/benchmark-methodology.md`](../docs/benchmark-methodology.md).

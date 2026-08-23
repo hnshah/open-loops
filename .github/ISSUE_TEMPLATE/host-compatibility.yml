@@ -1,0 +1,47 @@
+name: Host compatibility
+about: Report a problem installing or running Open Loops in an agent host
+labels: [compatibility]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste private work data. Use synthetic examples only.
+  - type: input
+    id: host
+    attributes:
+      label: Host
+      placeholder: Claude Code, Codex, another Agent Skills host
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Host and model version
+      description: Include the version if you know it.
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Where did it fail?
+      options:
+        - Installation or discovery
+        - Skill triggering
+        - Source access
+        - State reconstruction
+        - Output formatting
+        - External-action boundary
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Minimal reproduction
+      description: Use synthetic data only.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true

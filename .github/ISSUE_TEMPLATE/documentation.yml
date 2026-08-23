@@ -1,0 +1,21 @@
+name: Documentation
+about: Report unclear, missing, or misleading documentation
+labels: [documentation]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: File or section
+      placeholder: docs/compatibility.md
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is unclear or wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Suggested improvement

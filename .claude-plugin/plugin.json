@@ -1,0 +1,20 @@
+{
+  "name": "open-loops",
+  "description": "Find important unresolved commitments, requests, decisions, dependencies, follow-ups, and preparation work across authorized sources. Search for closure before surfacing, rank conservatively, attach evidence, and keep external writes approval-gated.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Hiten Shah",
+    "url": "https://github.com/hnshah"
+  },
+  "homepage": "https://github.com/hnshah/open-loops",
+  "repository": "https://github.com/hnshah/open-loops",
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "productivity",
+    "follow-up",
+    "commitments",
+    "state-reconstruction",
+    "open-loops"
+  ]
+}

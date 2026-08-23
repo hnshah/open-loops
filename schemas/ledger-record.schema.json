@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hnshah/open-loops/schemas/ledger-record.schema.json",
+  "title": "Open Loops Ledger Record",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "id",
+    "summary",
+    "status",
+    "last_checked"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "counterparty": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "source": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "candidate",
+        "open",
+        "waiting",
+        "watching",
+        "prepared",
+        "resolved",
+        "dismissed",
+        "obsolete"
+      ]
+    },
+    "expected_resolution": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "due": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "importance": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        null
+      ]
+    },
+    "confidence": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "high",
+        "medium",
+        "watching",
+        null
+      ]
+    },
+    "last_checked": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "resolution_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

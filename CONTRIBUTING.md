@@ -63,8 +63,14 @@ Do not add
 - [ ] No secrets or private source material are included.
 - [ ] External actions remain approval-gated.
 - [ ] `python3 scripts/validate_repo.py` passes.
+- [ ] `python3 scripts/check_portability.py` passes.
 - [ ] `python3 evals/validate_triggers.py` passes.
 - [ ] `python3 evals/validate_cases.py` passes.
+- [ ] `python3 scripts/package_skill.py --check` passes.
+
+## Documentation and adapter changes
+
+Host-specific installation notes, tool mappings, and adapters belong outside the universal reasoning core when possible. See [`docs/architecture.md`](docs/architecture.md) and [`docs/source-adapter-contract.md`](docs/source-adapter-contract.md).
 
 ## Design rule
 
