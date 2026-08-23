@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OUT_DIR="${OUT_DIR:-/tmp/open-loops-benchmark}"
+SMOKE="${SMOKE:-}"
 LIMIT="${LIMIT:-0}"
+
+if [[ -z "${OUT_DIR:-}" ]]; then
+  if [[ "$SMOKE" == "hard" ]]; then
+    OUT_DIR="/tmp/open-loops-hard-smoke"
+  else
+    OUT_DIR="/tmp/open-loops-benchmark"
+  fi
+fi
 mkdir -p "$OUT_DIR"
 
 MODEL_ARGS=()
@@ -10,10 +18,20 @@ if [[ -n "${CLAUDE_MODEL:-}" ]]; then
   MODEL_ARGS=(--model "$CLAUDE_MODEL")
 fi
 
-LIMIT_ARGS=()
+CASE_ARGS=()
 SCORE_ARGS=()
-if [[ "$LIMIT" != "0" ]]; then
-  LIMIT_ARGS=(--limit "$LIMIT")
+if [[ "$SMOKE" == "hard" ]]; then
+  if [[ "$LIMIT" != "0" ]]; then
+    echo "SMOKE=hard cannot be combined with LIMIT" >&2
+    exit 2
+  fi
+  CASE_ARGS=(--case-ids "case_010,case_017,case_026,case_036,case_037,case_042,case_043,case_046,case_049,case_060,case_062,case_064")
+  SCORE_ARGS=(--only-predicted)
+elif [[ -n "$SMOKE" ]]; then
+  echo "unknown SMOKE set: $SMOKE" >&2
+  exit 2
+elif [[ "$LIMIT" != "0" ]]; then
+  CASE_ARGS=(--limit "$LIMIT")
   SCORE_ARGS=(--only-predicted)
 fi
 
@@ -24,13 +42,13 @@ python3 evals/run_claude_blind.py \
   --condition baseline \
   --out "$BASELINE" \
   "${MODEL_ARGS[@]}" \
-  "${LIMIT_ARGS[@]}"
+  "${CASE_ARGS[@]}"
 
 python3 evals/run_claude_blind.py \
   --condition skill \
   --out "$SKILL" \
   "${MODEL_ARGS[@]}" \
-  "${LIMIT_ARGS[@]}"
+  "${CASE_ARGS[@]}"
 
 echo
 echo "=== BASELINE ==="
