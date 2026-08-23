@@ -2,10 +2,41 @@
 from pathlib import Path
 import argparse
 import json
+import re
 
 ROOT = Path(__file__).resolve().parent
 CASES_PATH = ROOT / "cases.jsonl"
 REVIEW_PATH = ROOT / "human-reviewed.jsonl"
+CANONICAL_STATES = (
+    "I owe",
+    "Waiting on",
+    "Response expected",
+    "Decision",
+    "Follow-up",
+    "Prepare",
+    "Dependency",
+    "Watching",
+)
+
+
+def canonicalize_state(value):
+    if not isinstance(value, str):
+        return None
+    text = value.strip()
+    lowered = text.lower()
+    for state in CANONICAL_STATES:
+        if lowered == state.lower():
+            return state
+    # Treat obvious descriptive expansions such as "I owe the deck" as the
+    # same semantic category while scoring exact enum compliance separately.
+    for state in sorted(CANONICAL_STATES, key=len, reverse=True):
+        prefix = state.lower()
+        if lowered.startswith(prefix) and len(lowered) > len(prefix):
+            next_char = lowered[len(prefix)]
+            if re.match(r"[\s:—-]", next_char):
+                return state
+    return None
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("predictions", type=Path)
@@ -61,13 +92,13 @@ else:
 main_tp = main_fp = main_fn = 0
 retained_tp = retained_fp = retained_fn = 0
 disposition_ok = disposition_total = 0
-state_ok = state_total = 0
+state_semantic_ok = state_total = 0
+state_schema_ok = state_schema_total = 0
 missing_cases = []
 
 for cid in scored_case_ids:
     case = cases[cid]
 
-    # Build anchor-level synthetic gold first.
     gold = {}
     expected_by_anchor = {}
     for item in case["expected"]["open"]:
@@ -77,7 +108,6 @@ for cid in scored_case_ids:
         gold[item["anchor"]] = "suppress"
         expected_by_anchor.setdefault(item["anchor"], item)
 
-    # Human case-level calibration overrides the primary obligation anchor.
     if cid in case_review:
         anchors = list(gold)
         if len(anchors) != 1:
@@ -126,10 +156,15 @@ for cid in scored_case_ids:
     if pred is not None:
         for item in pred.get("main", []):
             anchor = item.get("anchor")
-            if anchor in gold_main and item.get("state") and expected_by_anchor.get(anchor, {}).get("state"):
+            expected_state = expected_by_anchor.get(anchor, {}).get("state")
+            raw_state = item.get("state")
+            if anchor in gold_main and raw_state and expected_state:
                 state_total += 1
-                if item["state"] == expected_by_anchor[anchor]["state"]:
-                    state_ok += 1
+                if canonicalize_state(raw_state) == expected_state:
+                    state_semantic_ok += 1
+                state_schema_total += 1
+                if raw_state in CANONICAL_STATES:
+                    state_schema_ok += 1
 
 
 def ratio(num, den, empty=1.0):
@@ -147,10 +182,7 @@ print(f"available cases: {len(cases)}")
 print(f"scored cases: {len(scored_case_ids)}")
 print(f"predicted cases: {len(preds)}")
 print(f"human-reviewed overrides in scored set: {active_overrides}")
-if args.only_predicted:
-    print("scope: predicted subset only")
-else:
-    print("scope: full benchmark")
+print("scope: predicted subset only" if args.only_predicted else "scope: full benchmark")
 print(f"main precision: {main_precision:.3f}")
 print(f"main recall: {main_recall:.3f}")
 print(f"main f1: {main_f1:.3f}")
@@ -158,6 +190,8 @@ print(f"retained precision (main + watching): {retained_precision:.3f}")
 print(f"retained recall (main + watching): {retained_recall:.3f}")
 print(f"disposition accuracy: {disposition_acc:.3f}")
 if state_total:
-    print(f"state accuracy on matched main predictions: {state_ok / state_total:.3f}")
+    print(f"state category accuracy on matched main predictions: {state_semantic_ok / state_total:.3f}")
+if state_schema_total:
+    print(f"state schema adherence on matched main predictions: {state_schema_ok / state_schema_total:.3f}")
 if missing_cases:
     print(f"missing case predictions: {len(missing_cases)}")

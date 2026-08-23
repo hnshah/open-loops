@@ -24,6 +24,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "evals" / "cases.jsonl"
 SKILL_PATH = ROOT / "skills" / "open-loops"
+STATE_ENUM = ["I owe", "Waiting on", "Response expected", "Decision", "Follow-up", "Prepare", "Dependency"]
 
 
 def blind_cases():
@@ -104,6 +105,7 @@ def make_prompt(case: dict, condition: str) -> str:
         )
 
     payload = json.dumps(case, ensure_ascii=False, indent=2)
+    state_enum = ", ".join(STATE_ENUM)
     return f"""You are running one blind Open Loops benchmark case.
 
 {skill_instruction}Use only the source events in the case. Do not browse, search for outside facts, or inspect files outside the current directory.
@@ -113,6 +115,8 @@ Decide which source anchor, if any, represents an unresolved obligation that bel
 Return exactly one JSON object and no prose:
 {{"case_id":"{case['case_id']}","main":[{{"anchor":"m1","state":"I owe"}}],"watching":[]}}
 
+If you include `state` for a `main` item, use exactly one of these values and nothing else: {state_enum}.
+For a `watching` item, `state` is optional.
 Use only source IDs that appear in the case. `main` and `watching` may be empty. Do not invent an obligation merely to fill a bucket.
 
 CASE
