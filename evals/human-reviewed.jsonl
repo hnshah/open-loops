@@ -1,0 +1,10 @@
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_036","label":"main","reviewer_count":1,"note":"Investor introduction question deserves a response and belongs in the main list."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_042","label":"main","reviewer_count":1,"note":"Concrete reconnect-after-launch instruction is due and belongs in the main list."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_043","label":"watching","reviewer_count":1,"note":"Concrete follow-up exists but is not due yet. Preserve outside the main list."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_049","label":"suppress","reviewer_count":1,"note":"Routine calendar presence alone does not imply preparation work."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_057","label":"watching","reviewer_count":1,"note":"Vague future catch-up is too weak for the main list but worth preserving as low-pressure latent state."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_060","label":"main","reviewer_count":1,"note":"Blocked shipment plus partner commitment is a meaningful dependency."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_062","label":"main","reviewer_count":1,"note":"Explicit overdue user promise stays in the main list even when closure could exist in an inaccessible source. Scope uncertainty should be disclosed."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_063","label":"main","reviewer_count":1,"note":"Acknowledging a question with 'checking now' does not answer it."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_064","label":"watching","reviewer_count":1,"note":"Counterparty claims delivery to an inaccessible destination. Do not call it open or closed without receipt evidence."}
+{"batch":1,"reviewed_at":"2026-08-23","case_id":"case_037","label":"watching","reviewer_count":1,"note":"Casual coffee language should stay outside the main list but can remain visible as low-confidence relationship state."}
