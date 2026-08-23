@@ -1,10 +1,13 @@
 {
   "name": "open-loops-public-benchmark",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "case_file": "cases.jsonl",
   "trigger_file": "triggers.jsonl",
+  "ranking_file": "ranking-scenarios.jsonl",
+  "human_review_file": "human-reviewed.jsonl",
   "expected_case_count": 64,
   "expected_trigger_count": 26,
+  "expected_ranking_scenario_count": 1,
   "primary_real_world_metric": "Precision@5",
-  "notes": "Synthetic regression suite. Not a model-performance claim."
+  "notes": "Synthetic regression suite plus human-reviewed calibration. Not a model-performance claim."
 }
