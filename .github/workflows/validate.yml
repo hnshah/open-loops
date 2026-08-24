@@ -26,6 +26,7 @@ jobs:
       - run: python3 evals/test_calibrated_scorer.py
       - run: python3 evals/export_blind_cases.py > /tmp/open-loops-blind-cases.jsonl && test "$(wc -l < /tmp/open-loops-blind-cases.jsonl)" -eq 64
       - run: python3 evals/run_claude_blind.py --help > /dev/null
+      - run: python3 evals/merge_prediction_sets.py --help > /dev/null
       - run: bash -n evals/run_claude_compare.sh
       - run: python3 scripts/package_skill.py --check
       - run: python3 -m compileall -q scripts evals
