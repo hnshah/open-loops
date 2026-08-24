@@ -1,6 +1,6 @@
 {
   "name": "open-loops-public-benchmark",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "case_file": "cases.jsonl",
   "trigger_file": "triggers.jsonl",
   "ranking_file": "ranking-scenarios.jsonl",
@@ -11,5 +11,7 @@
   "expected_ranking_scenario_count": 1,
   "expected_pairwise_preference_count": 14,
   "primary_real_world_metric": "Precision@5",
-  "notes": "Synthetic regression suite plus human-reviewed disposition, ranking, pairwise, and side-reversal stability calibration. Not a model-performance claim."
+  "scoring_unit": "real_world_obligation",
+  "generic_calibration_scope": "universal",
+  "notes": "Synthetic regression suite plus human-reviewed calibration. Related evidence anchors may represent one obligation; reviewer-specific personal overrides are excluded from generic model scoring unless explicitly enabled. Not a model-performance claim."
 }
