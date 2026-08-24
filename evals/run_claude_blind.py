@@ -39,6 +39,17 @@ def blind_cases():
         }
 
 
+def parse_case_ids(raw: str | None, flag: str) -> list[str]:
+    if not raw:
+        return []
+    values = [value.strip() for value in raw.split(",") if value.strip()]
+    if not values:
+        raise ValueError(f"{flag} must contain at least one case ID")
+    if len(values) != len(set(values)):
+        raise ValueError(f"{flag} cannot contain duplicates")
+    return values
+
+
 def extract_json(text: str) -> dict:
     stripped = text.strip()
     if stripped.startswith("```"):
@@ -133,7 +144,11 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=0, help="run only the first N cases; 0 means all")
     parser.add_argument(
         "--case-ids",
-        help="optional comma-separated case IDs to run in the supplied order; cannot be combined with --limit",
+        help="optional comma-separated case IDs to run in the supplied order; cannot be combined with --limit or --exclude-case-ids",
+    )
+    parser.add_argument(
+        "--exclude-case-ids",
+        help="optional comma-separated case IDs to skip; useful when reusing frozen predictions for an already-run subset",
     )
     args = parser.parse_args()
 
@@ -143,25 +158,33 @@ def main() -> int:
     if args.condition == "skill" and not SKILL_PATH.exists():
         print(f"skill directory not found: {SKILL_PATH}", file=sys.stderr)
         return 2
-    if args.case_ids and args.limit:
-        print("--case-ids cannot be combined with --limit", file=sys.stderr)
+    if args.case_ids and (args.limit or args.exclude_case_ids):
+        print("--case-ids cannot be combined with --limit or --exclude-case-ids", file=sys.stderr)
+        return 2
+    if args.limit and args.exclude_case_ids:
+        print("--limit cannot be combined with --exclude-case-ids", file=sys.stderr)
         return 2
 
     cases = list(blind_cases())
-    if args.case_ids:
-        requested = [value.strip() for value in args.case_ids.split(",") if value.strip()]
-        if not requested:
-            print("--case-ids must contain at least one case ID", file=sys.stderr)
-            return 2
-        by_id = {case["case_id"]: case for case in cases}
-        unknown = [cid for cid in requested if cid not in by_id]
-        if unknown:
-            print(f"unknown case IDs: {', '.join(unknown)}", file=sys.stderr)
-            return 2
-        if len(requested) != len(set(requested)):
-            print("--case-ids cannot contain duplicates", file=sys.stderr)
-            return 2
+    by_id = {case["case_id"]: case for case in cases}
+
+    try:
+        requested = parse_case_ids(args.case_ids, "--case-ids")
+        excluded = parse_case_ids(args.exclude_case_ids, "--exclude-case-ids")
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+    unknown = [cid for cid in [*requested, *excluded] if cid not in by_id]
+    if unknown:
+        print(f"unknown case IDs: {', '.join(unknown)}", file=sys.stderr)
+        return 2
+
+    if requested:
         cases = [by_id[cid] for cid in requested]
+    elif excluded:
+        excluded_set = set(excluded)
+        cases = [case for case in cases if case["case_id"] not in excluded_set]
     elif args.limit:
         cases = cases[: args.limit]
 
