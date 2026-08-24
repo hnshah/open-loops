@@ -6,6 +6,7 @@ LIMIT="${LIMIT:-0}"
 CONDITION="${CONDITION:-both}"
 RESCORE_ONLY="${RESCORE_ONLY:-0}"
 REUSE_HARD="${REUSE_HARD:-0}"
+RESUME="${RESUME:-0}"
 HARD_DIR="${HARD_DIR:-/tmp/open-loops-hard-smoke}"
 HARD_CASES="case_010,case_017,case_026,case_036,case_037,case_042,case_043,case_046,case_049,case_060,case_062,case_064"
 
@@ -21,6 +22,14 @@ mkdir -p "$OUT_DIR"
 MODEL_ARGS=()
 if [[ -n "${CLAUDE_MODEL:-}" ]]; then
   MODEL_ARGS=(--model "$CLAUDE_MODEL")
+fi
+
+RUN_ARGS=()
+if [[ "$RESUME" == "1" ]]; then
+  RUN_ARGS=(--resume)
+elif [[ "$RESUME" != "0" ]]; then
+  echo "RESUME must be 0 or 1" >&2
+  exit 2
 fi
 
 CASE_ARGS=()
@@ -56,6 +65,10 @@ if [[ "$REUSE_HARD" != "0" && "$REUSE_HARD" != "1" ]]; then
   echo "REUSE_HARD must be 0 or 1" >&2
   exit 2
 fi
+if [[ "$RESCORE_ONLY" == "1" && "$RESUME" == "1" ]]; then
+  echo "RESUME=1 cannot be combined with RESCORE_ONLY=1" >&2
+  exit 2
+fi
 if [[ "$REUSE_HARD" == "1" ]]; then
   if [[ -n "$SMOKE" || "$LIMIT" != "0" || "$RESCORE_ONLY" != "0" || "$CONDITION" != "both" ]]; then
     echo "REUSE_HARD=1 requires a full CONDITION=both run with no SMOKE, LIMIT, or RESCORE_ONLY" >&2
@@ -86,13 +99,15 @@ if [[ "$REUSE_HARD" == "1" ]]; then
     --condition baseline \
     --out "$REM_BASELINE" \
     "${MODEL_ARGS[@]}" \
-    "${CASE_ARGS[@]}"
+    "${CASE_ARGS[@]}" \
+    "${RUN_ARGS[@]}"
 
   python3 evals/run_claude_blind.py \
     --condition skill \
     --out "$REM_SKILL" \
     "${MODEL_ARGS[@]}" \
-    "${CASE_ARGS[@]}"
+    "${CASE_ARGS[@]}" \
+    "${RUN_ARGS[@]}"
 
   python3 evals/merge_prediction_sets.py --out "$BASELINE" "$HARD_BASELINE" "$REM_BASELINE"
   python3 evals/merge_prediction_sets.py --out "$SKILL" "$HARD_SKILL" "$REM_SKILL"
@@ -109,7 +124,8 @@ elif [[ "$RESCORE_ONLY" == "0" ]]; then
       --condition baseline \
       --out "$BASELINE" \
       "${MODEL_ARGS[@]}" \
-      "${CASE_ARGS[@]}"
+      "${CASE_ARGS[@]}" \
+      "${RUN_ARGS[@]}"
   fi
 
   if [[ "$CONDITION" == "both" || "$CONDITION" == "skill" ]]; then
@@ -117,7 +133,8 @@ elif [[ "$RESCORE_ONLY" == "0" ]]; then
       --condition skill \
       --out "$SKILL" \
       "${MODEL_ARGS[@]}" \
-      "${CASE_ARGS[@]}"
+      "${CASE_ARGS[@]}" \
+      "${RUN_ARGS[@]}"
   fi
 fi
 
