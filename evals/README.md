@@ -79,7 +79,9 @@ Core fields
 }
 ```
 
-`anchor` points to the source event that created the underlying obligation. For duplicate cases, an expected open loop may also include `related` source IDs.
+`anchor` points to the primary source event for the obligation. `related` source IDs are supporting evidence for the same real-world obligation unless a related source ID is itself a separately scored expected anchor.
+
+The calibrated scorer operates at the **obligation level**, not the raw evidence-anchor level. A model may anchor one obligation to any accepted evidence alias without being penalized for choosing a different but valid source event. Surfacing multiple aliases for the same obligation is tracked separately as a duplicate.
 
 ## Human-reviewed calibration
 
@@ -90,6 +92,13 @@ Calibration uses three dispositions:
 - `main`
 - `watching`
 - `suppress`
+
+Each human judgment also has a calibration scope:
+
+- `universal` — product reasoning that should apply to the generic public skill, such as a future follow-up remaining in Watching until it is due.
+- `personal` — a reviewer-specific preference, such as keeping casual coffee language visible as relationship state.
+
+Generic baseline-vs-skill model runs apply only universal overrides. Personal overrides should be scored only when both tested conditions received the matching personal preferences. This prevents the benchmark from penalizing a generic skill for failing to know a reviewer-specific rule it was never given.
 
 A reviewed judgment can differ from the original synthetic expectation. The disagreement stays visible rather than being silently erased.
 
@@ -158,21 +167,35 @@ python3 evals/validate_cases.py
 
 ## Score structured predictions
 
-A host adapter can write predictions as JSONL.
+For the current three-bucket benchmark, a host adapter writes predictions as JSONL.
 
 ```json
-{"case_id":"case_001","open":[{"anchor":"m1","state":"I owe","rank":1}]}
+{"case_id":"case_001","main":[{"anchor":"m1","state":"I owe"}],"watching":[]}
 ```
 
-Then run
+Score a complete generic run with
 
 ```bash
-python3 evals/score_predictions.py predictions.jsonl
+python3 evals/score_calibrated.py predictions.jsonl
 ```
 
-The deterministic scorer measures obligation classification, state accuracy, false positives, misses, and duplicate overproduction when the prediction format includes repeated anchors.
+Score a smoke subset with
 
-It does not pretend to solve subjective importance grading. Human or rubric-judge review is still needed for ranking quality and next-step usefulness.
+```bash
+python3 evals/score_calibrated.py predictions.jsonl --only-predicted
+```
+
+Only use reviewer-specific calibration when the evaluated model actually received those personal preferences:
+
+```bash
+python3 evals/score_calibrated.py predictions.jsonl --include-personal-overrides
+```
+
+The calibrated scorer measures Main precision/recall/F1, retained-state precision/recall, disposition accuracy, semantic state accuracy, exact state-schema adherence, duplicate evidence-anchor predictions, and orphan predictions.
+
+`score_predictions.py` remains the legacy binary scorer for the original `open` prediction shape.
+
+Neither deterministic scorer pretends to solve subjective ranking quality. Human or rubric-judge review is still needed for ranking and next-step usefulness.
 
 ## Real-world dogfood protocol
 
