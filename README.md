@@ -26,7 +26,9 @@ Open Loops is deliberately conservative.
 - It prefers five high-confidence loops over fifty possible tasks.
 - It merges duplicate references to the same real-world obligation.
 - It distinguishes what you owe, what you are waiting on, responses, decisions, dependencies, follow-ups, and preparation.
-- It treats weak social language and naturally concluded conversations as noise unless context makes them important.
+- It keeps future-dated follow-ups out of the main list until they are due.
+- It does not infer preparation from a routine calendar event alone.
+- It treats weak social language and naturally concluded conversations as noise unless context or a learned personal rule makes them important.
 - It does not take external actions without approval.
 
 The intended reaction is simple.
@@ -97,19 +99,22 @@ search forward for resolution
     ↓
 deduplicate into real-world loops
     ↓
-rank by importance + urgency + open-state confidence
+classify Main / Watching / Suppress
+    ↓
+rank Main by importance + urgency + open-state confidence
     ↓
 3-5 evidence-backed open loops
 ```
 
 The core technical idea is **state reconstruction**.
 
-For every candidate, the skill asks two separate questions.
+For every candidate, the skill asks three separate questions.
 
 1. What happened that might have created an obligation?
 2. What happened later that may have closed, changed, delegated, cancelled, or superseded it?
+3. Does the current state deserve attention now, belong in Watching, or no longer matter?
 
-Only then does it decide whether the loop is still open.
+Only then does it decide whether the loop should surface.
 
 ## Example
 
@@ -179,7 +184,7 @@ Gather the current churn numbers and prepare the review-ready view.
 ## Probably fine
 
 - Marco numbers. Closed by the later message and attachment.
-- Coffee with Jordan. Too weak to treat as a real commitment.
+- Coffee with Jordan. Too weak to treat as a generic obligation without a personal rule saying otherwise.
 ```
 
 The example is intentionally small. See [`examples/demo.md`](examples/demo.md) for the full evidence trail and [`examples/multi-source.md`](examples/multi-source.md) for cross-source closure.
@@ -190,15 +195,17 @@ Open Loops looks for seven kinds of unresolved work.
 
 | Type | Meaning |
 | --- | --- |
-| I owe | You made an explicit or strongly implied commitment. |
-| Waiting on | Someone else committed to deliver something and it has not arrived. |
-| Response expected | A question, introduction, approval, escalation, or request reasonably needs your response. |
-| Decision unresolved | The conversation reached a real decision point without evidence of a decision. |
-| Follow-up | The exchange created a concrete later interaction. |
-| Preparation | An upcoming event plus supporting evidence implies work before it happens. |
-| Dependency | Progress is blocked on an expected action or missing information. |
+| I owe | You explicitly promised, accepted, or were assigned an action. |
+| Waiting on | Someone else owes a deliverable or response and no stronger blocker state applies. |
+| Response expected | An inbound question, introduction, approval, escalation, or request reasonably needs your answer. |
+| Decision | You are the unresolved decision-maker. |
+| Follow-up | A concrete later interaction is due because its date or condition has arrived. |
+| Prepare | An upcoming event has explicit supporting evidence that preparation is required. |
+| Dependency | Consequential progress is explicitly blocked on an expected action or missing information. |
 
 It does **not** try to convert every sentence into work.
+
+`Watching` is a disposition for meaningful state that should be preserved without consuming scarce primary attention yet. A future follow-up, incomplete source scope, or unverifiable completion claim can belong there.
 
 ## Product laws
 
@@ -207,12 +214,14 @@ These are the opinions that make the skill useful.
 1. **Evidence before inference.** Every surfaced loop must be traceable to source evidence.
 2. **Search for closure.** A candidate is not an open loop until later evidence has been checked.
 3. **Precision over exhaustiveness.** Weak candidates stay out of the main list.
-4. **Current state over old text.** Later completion, cancellation, delegation, or supersession wins.
-5. **One obligation, one loop.** Multiple references collapse into one item.
+4. **Current state over old text.** Later completion, cancellation, delegation, supersession, or obsolescence wins.
+5. **One obligation, one loop.** Multiple evidence references collapse into one item.
 6. **Importance matters.** A technically real but trivial loop can still be noise.
-7. **Uncertainty is useful.** Medium-confidence items can sit in `Probably fine` or `Watching` instead of polluting the top list.
-8. **Quiet is valid.** If nothing important remains open, say so.
-9. **Prepare freely. Write externally only with approval.** Drafts, research, and preparation are allowed. Sending, publishing, scheduling, deleting, and external mutation require approval.
+7. **Uncertainty is useful.** Medium-confidence or unverifiable items can sit in `Probably fine` or `Watching` instead of polluting the top list.
+8. **Time gates attention.** A concrete future follow-up stays in Watching until it is due. A deadline-bound action can become obsolete after its only useful window passes.
+9. **Calendar presence is not prep evidence.** Routine events alone do not create `Prepare` loops.
+10. **Quiet is valid.** If nothing important remains open, say so.
+11. **Prepare freely. Write externally only with approval.** Drafts, research, and preparation are allowed. Sending, publishing, scheduling, deleting, and external mutation require approval.
 
 ## Source model
 
@@ -228,6 +237,8 @@ Useful capabilities include
 - inspect project systems
 
 If only one source is available, the skill still runs. It reports the resolution scope so the user knows what could and could not be checked.
+
+A counterparty saying "sent it to your operations inbox" does not prove receipt when that inbox is outside the authorized source set. The skill should preserve that uncertainty rather than inventing closure.
 
 See [`references/source-capabilities.md`](skills/open-loops/references/source-capabilities.md).
 
@@ -252,7 +263,7 @@ See [`PRIVACY.md`](PRIVACY.md) and [`references/feedback-and-learning.md`](skill
 
 This repo treats evals as product code.
 
-The initial public benchmark covers
+The public benchmark covers
 
 - explicit promises
 - completed promises
@@ -267,7 +278,12 @@ The initial public benchmark covers
 - stale obligations
 - cross-source completion
 - timing errors
-- ownership errors
+- ownership and state errors
+- partial evidence
+- Main / Watching / Suppress calibration
+- mixed ranking and pairwise preference calibration
+
+The calibrated scorer operates at the real-world obligation level. `related` evidence events can be valid aliases for one obligation. Reviewer-specific personal preferences are excluded from generic model scoring unless the model was actually given those preferences.
 
 Run the repository checks
 
@@ -275,6 +291,8 @@ Run the repository checks
 python3 scripts/validate_repo.py
 python3 evals/validate_triggers.py
 python3 evals/validate_cases.py
+python3 evals/validate_human_reviews.py
+python3 evals/test_calibrated_scorer.py
 ```
 
 The benchmark is intentionally synthetic. Do not submit private inbox or Slack data. If you find a failure, sanitize it into the smallest possible case.
@@ -294,7 +312,7 @@ Use the issue templates for
 
 Replace names, companies, links, exact amounts, and sensitive details with synthetic placeholders before submitting.
 
-Every behavior change should add or update an eval case.
+Every behavior change should add or update an eval case or human calibration record before the instructions change.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
@@ -338,7 +356,7 @@ open-loops/
 ├── docs/                        # public method and architecture
 │   └── adr/                     # durable product decisions
 ├── schemas/                     # optional adapter / runner contracts
-├── evals/                       # triggers, state cases, rubric, scorecards
+├── evals/                       # triggers, state cases, calibration, scorecards
 ├── examples/                    # single- and multi-source walkthroughs
 └── scripts/                     # validation, portability, packaging
 ```
@@ -360,12 +378,13 @@ The repository is deliberately explicit about the remaining unknowns.
 - Personalization quality depends on whether the runtime can persist user corrections safely.
 - Routine ownership should come only after repeated one-time scans prove useful.
 - The synthetic benchmark is a regression suite, not evidence of real-inbox precision.
+- Model lift must be measured on frozen baseline-vs-skill runs after benchmark semantics are validated.
 
 Every real failure should become a sanitized fixture before the public method gets more complicated.
 
 ## Status
 
-**v0.2.0 is still an experiment.**
+**v0.2.1 is still an experiment.**
 
 The public question is whether an agent can reliably reconstruct important unfinished work with enough precision that people choose to run it again.
 
