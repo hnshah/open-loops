@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires access to at least one authorized work source such as email, chat, calendar, meeting notes, files, or a project system.
 metadata:
   author: hnshah
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # Open Loops
@@ -22,8 +22,10 @@ Find the few important pieces of unfinished work that deserve attention now.
 6. **Do not invent work.** Weak social language, FYIs, ideas, and naturally concluded exchanges are not obligations by default.
 7. **Importance is part of correctness.** Do not crowd the top list with trivial but technically unresolved items.
 8. **Uncertainty is useful.** Preserve medium-confidence items as `Watching` or `Probably fine` instead of overstating certainty.
-9. **Quiet is valid.** If no important loops remain open, say so.
-10. **No consequential external action without approval.** You may inspect, analyze, gather, and prepare. Sending, publishing, scheduling, deleting, or mutating external records requires explicit approval.
+9. **Time gates attention.** A concrete future follow-up that is not due yet belongs in `Watching`, not the main list. An action whose only useful window has already passed may be obsolete.
+10. **Calendar presence is not preparation evidence.** A routine event alone does not create a `Prepare` loop.
+11. **Quiet is valid.** If no important loops remain open, say so.
+12. **No consequential external action without approval.** You may inspect, analyze, gather, and prepare. Sending, publishing, scheduling, deleting, or mutating external records requires explicit approval.
 
 Before a full scan, read these references only when needed.
 
@@ -105,6 +107,10 @@ Search all available authorized sources when cross-source closure is plausible.
 
 Do not infer that silence means completion. Do not infer that no same-thread reply means the item is still open if another available source could contain closure.
 
+If a counterparty claims completion or delivery in a destination you cannot inspect, do not call the item closed. Preserve it as `Watching` when the claim is meaningful but receipt cannot be verified. Mention the inaccessible destination when useful.
+
+If the obligation was only useful before a specific event and that event has already passed, ask whether the action can still produce its intended result. If not, treat the old action as obsolete and suppress it unless later evidence creates a new obligation.
+
 ### 4. Determine ownership and state
 
 Classify each remaining candidate into one of these user-facing states.
@@ -118,13 +124,24 @@ Classify each remaining candidate into one of these user-facing states.
 - **Dependency**
 - **Watching**
 
+Use the states consistently.
+
+- **I owe** when the user explicitly promised, accepted, or was assigned an action.
+- **Response expected** when someone asked the user a direct question or request that still needs an answer, without a separate user commitment being the stronger anchor.
+- **Waiting on** when another party owes a deliverable or response and no stronger blocker state applies.
+- **Decision** when the user is the unresolved decision-maker.
+- **Follow-up** when an explicit follow-up date or condition has arrived. Before it arrives, keep the item in `Watching`.
+- **Prepare** when evidence explicitly requires preparation for an upcoming event. A calendar event by itself is not enough.
+- **Dependency** when a project, launch, shipment, decision, or other consequential work is explicitly blocked on a prerequisite. Prefer `Dependency` over `Waiting on` when the blocked consequence is part of the evidence.
+- **Watching** when the state is meaningful to preserve but is not yet due, cannot be verified, or does not deserve primary attention now.
+
 If ownership moved to someone else, do not keep it as an `I owe` loop.
 
 ### 5. Deduplicate
 
 Collapse multiple messages, threads, calendar notes, or documents that refer to the same real-world obligation.
 
-Preserve the strongest evidence and any useful resolution-search trail.
+Preserve the strongest evidence and any useful resolution-search trail. The primary evidence anchor may be whichever source best expresses the current unresolved state; keep other source IDs as related evidence instead of surfacing duplicate loops.
 
 ### 6. Rank what matters
 
@@ -232,11 +249,11 @@ Say that no high-confidence important open loops were found in the checked scope
 
 ### Ambiguous candidate
 
-Place it in `Watching` or `Probably fine`, or suppress it. Do not promote it merely to make the list longer.
+A concrete future follow-up that is not due yet belongs in `Watching`. Weak social niceties are suppressed by default unless a learned personal preference says to retain them. Do not promote ambiguity merely to make the list longer.
 
 ### Completion cannot be verified
 
-State the uncertainty and which source could not be checked. Do not claim closure or openness with false certainty.
+State the uncertainty and which source could not be checked. A credible claim of completion in an inaccessible destination belongs in `Watching` until receipt can be verified, rather than being called definitely open or definitely closed.
 
 ### User asks for a generic task list
 
@@ -250,8 +267,10 @@ Before returning a scan, verify
 - later closure was searched for
 - completed or obsolete items are suppressed
 - ownership is correct
+- future-dated follow-ups are not promoted before they are due
+- routine calendar events do not create inferred prep work
 - duplicates are merged
 - the main list is ordered by likely importance, not message recency alone
-- weak social niceties are not promoted without context
+- weak social niceties are not promoted without context or a learned preference
 - external actions have not been taken without approval
 - the output is short enough to act on
