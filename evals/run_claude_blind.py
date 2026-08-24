@@ -87,9 +87,17 @@ def normalize_prediction(value: dict, case: dict) -> dict:
         if not isinstance(items, list):
             raise ValueError(f"{bucket} must be a list")
         seen = set()
-        for item in items:
-            if not isinstance(item, dict):
-                raise ValueError(f"every {bucket} item must be an object")
+        for raw_item in items:
+            # Small formatting deviations should not turn an otherwise valid blind
+            # judgment into a failed benchmark run. Accept a bare source ID as the
+            # shorthand form of {"anchor": "..."}; semantic scoring remains unchanged.
+            if isinstance(raw_item, str):
+                item = {"anchor": raw_item}
+            elif isinstance(raw_item, dict):
+                item = raw_item
+            else:
+                raise ValueError(f"every {bucket} item must be an object or source-ID string")
+
             anchor = item.get("anchor")
             if anchor not in source_ids:
                 raise ValueError(f"unknown anchor {anchor!r} in {bucket}")
@@ -105,6 +113,42 @@ def normalize_prediction(value: dict, case: dict) -> dict:
     if overlap:
         raise ValueError(f"anchors cannot be both main and watching: {sorted(overlap)}")
     return result
+
+
+def load_existing_predictions(path: Path) -> dict[str, dict]:
+    existing = {}
+    if not path.exists():
+        return existing
+    for line_no, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not raw.strip():
+            continue
+        item = json.loads(raw)
+        cid = item.get("case_id")
+        if not cid:
+            raise ValueError(f"missing case_id in existing prediction line {line_no}")
+        if cid in existing:
+            raise ValueError(f"duplicate case_id in existing predictions: {cid}")
+        existing[cid] = item
+    return existing
+
+
+def keep_completed_raw_records(raw_path: Path, completed_ids: set[str]) -> None:
+    """Drop failed/incomplete raw attempts before a resumed run appends new results."""
+    if not raw_path.exists():
+        return
+    kept = []
+    seen = set()
+    for line_no, raw in enumerate(raw_path.read_text(encoding="utf-8").splitlines(), 1):
+        if not raw.strip():
+            continue
+        item = json.loads(raw)
+        cid = item.get("case_id")
+        if cid in completed_ids and cid not in seen:
+            kept.append(item)
+            seen.add(cid)
+    with raw_path.open("w", encoding="utf-8") as handle:
+        for item in kept:
+            handle.write(json.dumps(item, ensure_ascii=False) + "\n")
 
 
 def make_prompt(case: dict, condition: str) -> str:
@@ -150,6 +194,11 @@ def main() -> int:
         "--exclude-case-ids",
         help="optional comma-separated case IDs to skip; useful when reusing frozen predictions for an already-run subset",
     )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="preserve valid predictions already in --out and continue with only unfinished selected cases",
+    )
     args = parser.parse_args()
 
     if shutil.which("claude") is None:
@@ -193,7 +242,25 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     raw_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with out_path.open("w", encoding="utf-8") as pred_file, raw_path.open("w", encoding="utf-8") as raw_file:
+    selected_ids = {case["case_id"] for case in cases}
+    existing = {}
+    if args.resume:
+        try:
+            existing = load_existing_predictions(out_path)
+        except Exception as exc:
+            print(f"cannot resume: {exc}", file=sys.stderr)
+            return 2
+        unexpected = set(existing) - selected_ids
+        if unexpected:
+            print(f"cannot resume: existing predictions include unselected cases: {sorted(unexpected)}", file=sys.stderr)
+            return 2
+        keep_completed_raw_records(raw_path, set(existing))
+        cases = [case for case in cases if case["case_id"] not in existing]
+        print(f"resume: preserving {len(existing)} completed predictions; {len(cases)} cases remain", file=sys.stderr)
+
+    pred_mode = "a" if args.resume else "w"
+    raw_mode = "a" if args.resume else "w"
+    with out_path.open(pred_mode, encoding="utf-8") as pred_file, raw_path.open(raw_mode, encoding="utf-8") as raw_file:
         for index, case in enumerate(cases, 1):
             with tempfile.TemporaryDirectory(prefix="open-loops-blind-") as temp_dir:
                 temp = Path(temp_dir)
@@ -235,7 +302,8 @@ def main() -> int:
                 pred_file.flush()
                 print(f"[{index}/{len(cases)}] {case['case_id']}", file=sys.stderr)
 
-    print(f"wrote {len(cases)} predictions to {out_path}")
+    total_written = len(existing) + len(cases)
+    print(f"wrote {total_written} predictions to {out_path}")
     print(f"wrote raw outputs to {raw_path}")
     return 0
 
