@@ -10,6 +10,18 @@ The benchmark therefore evaluates state reconstruction and judgment, not raw ext
 
 A case can require the model to identify an obligation, find later closure, infer ownership, merge duplicates, respect timing, choose a disposition, and rank importance.
 
+## The scoring unit is the obligation
+
+Open Loops reasons about real-world obligations, not arbitrary source-event IDs.
+
+One obligation can be evidenced by several messages, notes, or calendar events. The benchmark therefore treats an expected `anchor` plus its non-conflicting `related` source IDs as acceptable evidence aliases for the same obligation.
+
+If a related source ID is itself a separately scored expected anchor, it remains a separate obligation and is not an alias.
+
+A model is not penalized merely for choosing a different valid evidence event as its primary anchor. Surfacing multiple evidence aliases as separate loops is measured as a duplicate instead.
+
+This keeps the benchmark aligned with the product law: one obligation, one loop.
+
 ## Public benchmark units
 
 The public suite has four fixture types.
@@ -66,13 +78,29 @@ Before treating subjective cases as benchmark truth:
 2. collect a human disposition judgment
 3. compare it to the synthetic label
 4. record disagreements rather than silently rewriting history
-5. update the current calibration gold where appropriate
+5. classify the judgment as universal product reasoning or a personal preference
+6. update the current calibration gold where appropriate
 
 For ranking, ask the reviewer to order a mixed candidate set under a fixed display limit and separately mark Watching or Suppress candidates.
 
 Then use pairwise comparisons to isolate the dimensions that may explain the ranking.
 
 This surfaces the user's actual attention policy instead of forcing all unresolved work into a binary open/closed frame.
+
+## Universal and personal calibration are different
+
+A generic public skill cannot be expected to know a reviewer-specific preference it was never given.
+
+Human-reviewed calibration therefore records a `scope`:
+
+- **universal** — reasoning intended to apply to the generic product, such as not promoting a future follow-up before it is due
+- **personal** — an individual preference, such as retaining casual coffee language as low-pressure relationship state
+
+Generic baseline-vs-skill comparisons apply universal overrides only.
+
+Personal overrides may be included only when both evaluated conditions received the matching personal preferences. Otherwise the benchmark would reward hidden knowledge instead of skill quality.
+
+Ranking and pairwise calibration are generally personal unless a separate review establishes a universal rule.
 
 ## Ranking may be contextual
 
@@ -124,6 +152,8 @@ How often does the system correctly recognize that an apparent obligation has al
 
 How often does one real-world obligation appear more than once?
 
+Evidence aliases for the same obligation should count as one loop. If a model surfaces multiple aliases separately, record that as a duplicate rather than pretending they are independent obligations.
+
 ### Miss rate
 
 What important loops did the user know about that the system failed to surface?
@@ -164,6 +194,7 @@ A credible benchmark report should include:
 - host and model
 - source scope
 - fixture set version
+- calibration scope used for scoring
 - whether the skill was explicitly invoked or auto-triggered
 - temperature or equivalent control if exposed
 - number of independent runs
@@ -184,6 +215,8 @@ When possible, compare:
 
 That isolates skill lift from model capability.
 
+Do not apply hidden personal calibration to one of these conditions unless both receive the same preference context.
+
 ## Do not leak private data into the benchmark
 
 Real failures should be reduced to synthetic cases.
@@ -198,6 +231,8 @@ Do not:
 - publish a precision number from one curated inbox run
 - tune against the entire public suite and present it as held-out performance
 - compare hosts with radically different source access without disclosure
+- penalize a valid evidence alias as though it were a different obligation
+- apply reviewer-specific calibration to a generic model that was never given the preference
 - treat rank > display limit as equivalent to Watching
 - force inconsistent human ranking judgments into a fake universal score
 - turn subjective importance judgments into fake decimal precision
