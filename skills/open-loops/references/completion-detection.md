@@ -44,6 +44,19 @@ If the relevant second source is authorized, search it before surfacing the loop
 
 If it is not available, do not pretend the search was complete. Mention the limited resolution scope when it affects confidence.
 
+## Claimed completion outside the visible scope
+
+A statement such as "sent it to your operations inbox" is evidence of a claimed completion, but it is not proof of receipt when that destination is outside the authorized source set.
+
+In that situation
+
+- do not call the obligation definitely closed
+- do not ignore the completion claim and call it definitely open
+- preserve the unresolved verification state as `Watching` when it still matters
+- state which destination or source could not be checked
+
+If later authorized evidence confirms receipt, close the loop.
+
 ## Delegation
 
 Delegation changes ownership.
@@ -76,6 +89,25 @@ Wed
 
 The old report commitment is closed as obsolete.
 
+## Expired action windows
+
+Some obligations are only useful before a specific event.
+
+Example
+
+```text
+Tue
+"I'll review the candidate packet before Thursday's debrief."
+
+Thu
+Candidate debrief occurs.
+
+Sat
+No evidence confirms whether the review happened.
+```
+
+Do not keep the old review as an actionable loop merely because completion is unverified. If the action can no longer achieve its intended purpose, treat it as obsolete. Surface a new follow-up only if later evidence creates one, such as a request to revisit the candidate decision.
+
 ## Partial completion
 
 Do not close a loop because one subpart happened if the original expected result remains incomplete.
@@ -99,6 +131,6 @@ If authorized sources make cross-source closure plausible, search them.
 
 Old unresolved text is not automatically an active obligation.
 
-Look for project cancellation, changed priorities, later decisions, role changes, or other evidence that makes the candidate obsolete.
+Look for project cancellation, changed priorities, later decisions, role changes, expired action windows, or other evidence that makes the candidate obsolete.
 
 When staleness is ambiguous, suppress or mark `Watching` rather than reviving dead work aggressively.
