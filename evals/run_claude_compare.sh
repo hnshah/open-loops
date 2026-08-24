@@ -59,4 +59,8 @@ echo "=== OPEN LOOPS ==="
 python3 evals/score_calibrated.py "$SKILL" "${SCORE_ARGS[@]}"
 
 echo
+echo "=== PER-CASE COMPARISON ==="
+python3 evals/compare_predictions.py "$BASELINE" "$SKILL"
+
+echo
 echo "Predictions and raw outputs are in $OUT_DIR"
