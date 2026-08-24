@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.1 - 2026-08-23
+
+Tighten state reconstruction and make the benchmark score real-world obligations rather than raw evidence anchors.
+
+- keep concrete future follow-ups in Watching until their date or condition arrives
+- suppress routine calendar events when no explicit preparation evidence exists
+- distinguish `Response expected`, `Waiting on`, `Dependency`, and `Prepare` more precisely
+- preserve claimed completion in inaccessible destinations as Watching until receipt can be verified
+- suppress deadline-bound actions after their only useful action window has passed
+- separate universal product calibration from reviewer-specific personal preferences
+- score related evidence anchors as aliases for the same obligation when they are not separately scored obligations
+- track duplicate evidence-anchor predictions separately from obligation precision
+- improve per-case benchmark comparison output
+
+No model-performance claim is introduced in this release.
+
 ## 0.2.0 - 2026-08-22
 
 Flesh out the public repository around the portable skill without broadening the job.
