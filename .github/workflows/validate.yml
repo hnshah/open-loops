@@ -20,8 +20,10 @@ jobs:
       - run: python3 scripts/check_portability.py
       - run: python3 evals/validate_triggers.py
       - run: python3 evals/validate_cases.py
+      - run: python3 evals/validate_human_reviews.py
       - run: python3 evals/validate_rankings.py
       - run: python3 evals/validate_pairwise.py
+      - run: python3 evals/test_calibrated_scorer.py
       - run: python3 evals/export_blind_cases.py > /tmp/open-loops-blind-cases.jsonl && test "$(wc -l < /tmp/open-loops-blind-cases.jsonl)" -eq 64
       - run: python3 evals/run_claude_blind.py --help > /dev/null
       - run: bash -n evals/run_claude_compare.sh

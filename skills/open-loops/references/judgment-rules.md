@@ -16,11 +16,29 @@ Strong enough to compete for scarce space in the primary Open Loops list now.
 
 Meaningful state worth preserving, but not important, actionable, certain, or timely enough to compete for a primary slot now.
 
-Watching is not synonymous with uncertainty. A clearly real obligation can still be Watching when stronger items deserve attention first.
+Watching is not synonymous with uncertainty. A clearly real obligation can still be Watching when it is not due yet or when stronger items deserve attention first.
 
 ### Suppress
 
 Not meaningful enough to retain as open-loop state for the current scan.
+
+## Timing gates disposition
+
+A concrete future follow-up can be real without being actionable yet.
+
+- If the stated date or condition has arrived, it may become `Follow-up` in Main.
+- If the date or condition has not arrived, keep it in `Watching` rather than promoting it early.
+- If an action was useful only before a past event and can no longer achieve its intended result, treat it as obsolete unless later evidence creates a new obligation.
+
+Do not confuse "real" with "needs attention now."
+
+## Calendar evidence
+
+Calendar presence is supporting evidence, not automatic preparation work.
+
+A routine meeting, weekly sync, or other ordinary event with no explicit prep request should not create a `Prepare` loop. Suppress it by default.
+
+Use `Prepare` only when another source or the event itself explicitly states preparation requirements.
 
 ## Main eligibility is separate from display size
 
@@ -124,7 +142,9 @@ Usually suppress or demote
 - weak social niceties
 - generic "let's catch up sometime" language
 - low-consequence requests with no time pressure
+- routine calendar events without explicit preparation evidence
 - old items that likely became obsolete
+- deadline-bound actions whose useful window has passed
 - repeated automated reminders
 - conversations that naturally concluded
 - items already resolved elsewhere
@@ -141,6 +161,7 @@ Examples
 - customers rank above internal asks
 - recruiting candidates always matter
 - social follow-ups rarely matter
+- casual relationship language should stay visible in Watching
 - a specific project should always rank highly
 - introductions should always receive a response
 

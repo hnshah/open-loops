@@ -12,7 +12,20 @@ Human calibration uses three labels.
 
 This distinction matters. A candidate can be real enough to remember without being important enough to interrupt the user now.
 
-`evals/human-reviewed.jsonl` records reviewed labels. When a reviewed label differs from the original synthetic fixture, treat the human-reviewed judgment as the current gold interpretation for product calibration.
+`evals/human-reviewed.jsonl` records reviewed labels plus a `scope`.
+
+- `universal` reviews calibrate the generic public skill.
+- `personal` reviews apply only when the evaluated condition received the matching reviewer preference.
+
+A personal judgment must not silently become generic benchmark gold.
+
+## The scored object is the obligation
+
+The benchmark scores one real-world obligation once.
+
+An expected primary `anchor` and its non-conflicting `related` evidence IDs are acceptable evidence aliases for that obligation. If a related ID is itself a separately scored expected anchor, it remains separate.
+
+Choosing a different accepted evidence alias is not an error. Surfacing multiple aliases for the same obligation is a duplicate.
 
 ## Main eligibility is not the display cutoff
 
@@ -34,33 +47,48 @@ The evaluation therefore separates:
 
 ### Obligation classification
 
-Pass when the expected main-list anchors are classified as Main, watching candidates are kept out of the main list, and suppressed anchors are not promoted.
+Pass when each expected obligation receives the correct Main, Watching, or Suppress disposition regardless of which accepted evidence alias the model uses as its anchor.
 
 ### Completion detection
 
-Pass when later evidence that closes, cancels, delegates, supersedes, or obsoletes an obligation prevents the old loop from being surfaced.
+Pass when later evidence that closes, cancels, delegates, supersedes, obsoletes, or makes an action window useless prevents the old actionable loop from being surfaced.
 
-### Ownership
+### Ownership and state
 
-Pass when `I owe`, `Waiting on`, and other states reflect the current owner after later evidence.
+Pass when the state reflects the current kind of unresolved work.
+
+- `I owe` for an explicit user commitment or assignment
+- `Response expected` for an unanswered inbound question/request
+- `Waiting on` for another party's outstanding deliverable when no stronger blocker applies
+- `Dependency` when consequential work is explicitly blocked on the prerequisite
+- `Follow-up` only after the timing condition has arrived
+- `Prepare` only with explicit preparation evidence
 
 ### Duplicate collapse
 
-Pass when multiple references to one real-world obligation become one surfaced loop.
+Pass when multiple references to one real-world obligation become one surfaced loop. Multiple accepted evidence aliases surfaced as separate loops count as a duplicate.
 
 ### Timing
 
-Pass when future obligations are not promoted too early and overdue or imminent obligations are not surfaced too late. A concrete future obligation may still belong in Watching before it becomes actionable.
+Pass when future obligations are not promoted too early and overdue or imminent obligations are not surfaced too late. A concrete future obligation may belong in Watching before it becomes actionable.
+
+A deadline-bound action whose only useful window has already passed may be obsolete rather than an active Main loop.
+
+### Calendar discipline
+
+Pass when routine calendar presence alone does not create inferred preparation work.
 
 ### Evidence discipline
 
-Pass when the surfaced loop can point to the obligation anchor and does not claim a broader resolution search than the available sources support.
+Pass when the surfaced loop can point to an accepted evidence anchor and does not claim a broader resolution search than the available sources support.
+
+A claimed completion in an inaccessible destination should preserve uncertainty rather than being asserted as definitely open or closed.
 
 ## Ranking-scenario invariants
 
 ### Disposition accuracy
 
-Pass when each candidate is assigned to Main, Watching, or Suppress correctly.
+Pass when each candidate is assigned to Main, Watching, or Suppress correctly for the calibration scope being tested.
 
 ### Top-k selection
 
@@ -112,7 +140,7 @@ Of the five highest-ranked surfaced loops, how many does the user actually care 
 
 ### Completion detection accuracy
 
-How often does the skill correctly recognize that an apparent commitment has already closed?
+How often does the skill correctly recognize that an apparent commitment has already closed or become obsolete?
 
 ### Duplicate rate
 
@@ -124,7 +152,7 @@ What meaningful loops did the user know about that the skill failed to find?
 
 ### Watching calibration
 
-How often does the system correctly preserve lower-priority, ambiguous, or future state without promoting it into the primary list?
+How often does the system correctly preserve lower-priority, ambiguous, future, or unverifiable state without promoting it into the primary list?
 
 ### Ranking agreement
 
@@ -138,4 +166,4 @@ How many user corrections are needed before the brief becomes useful?
 
 Do not publish a precision number from synthetic fixtures as if it represents real inbox performance.
 
-A public quality claim should state the host, model, source mix, evaluation set, and grading method.
+A public quality claim should state the host, model, source mix, evaluation set, calibration scope, and grading method.
