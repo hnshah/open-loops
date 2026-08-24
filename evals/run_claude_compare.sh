@@ -3,6 +3,8 @@ set -euo pipefail
 
 SMOKE="${SMOKE:-}"
 LIMIT="${LIMIT:-0}"
+CONDITION="${CONDITION:-both}"
+RESCORE_ONLY="${RESCORE_ONLY:-0}"
 
 if [[ -z "${OUT_DIR:-}" ]]; then
   if [[ "$SMOKE" == "hard" ]]; then
@@ -35,32 +37,63 @@ elif [[ "$LIMIT" != "0" ]]; then
   SCORE_ARGS=(--only-predicted)
 fi
 
+case "$CONDITION" in
+  both|baseline|skill) ;;
+  *)
+    echo "CONDITION must be both, baseline, or skill" >&2
+    exit 2
+    ;;
+esac
+
+if [[ "$RESCORE_ONLY" != "0" && "$RESCORE_ONLY" != "1" ]]; then
+  echo "RESCORE_ONLY must be 0 or 1" >&2
+  exit 2
+fi
+
 BASELINE="$OUT_DIR/claude-baseline.jsonl"
 SKILL="$OUT_DIR/claude-open-loops.jsonl"
 
-python3 evals/run_claude_blind.py \
-  --condition baseline \
-  --out "$BASELINE" \
-  "${MODEL_ARGS[@]}" \
-  "${CASE_ARGS[@]}"
+if [[ "$RESCORE_ONLY" == "0" ]]; then
+  if [[ "$CONDITION" == "both" || "$CONDITION" == "baseline" ]]; then
+    python3 evals/run_claude_blind.py \
+      --condition baseline \
+      --out "$BASELINE" \
+      "${MODEL_ARGS[@]}" \
+      "${CASE_ARGS[@]}"
+  fi
 
-python3 evals/run_claude_blind.py \
-  --condition skill \
-  --out "$SKILL" \
-  "${MODEL_ARGS[@]}" \
-  "${CASE_ARGS[@]}"
+  if [[ "$CONDITION" == "both" || "$CONDITION" == "skill" ]]; then
+    python3 evals/run_claude_blind.py \
+      --condition skill \
+      --out "$SKILL" \
+      "${MODEL_ARGS[@]}" \
+      "${CASE_ARGS[@]}"
+  fi
+fi
 
-echo
-echo "=== BASELINE ==="
-python3 evals/score_calibrated.py "$BASELINE" "${SCORE_ARGS[@]}"
+if [[ -f "$BASELINE" ]]; then
+  echo
+  echo "=== BASELINE ==="
+  python3 evals/score_calibrated.py "$BASELINE" "${SCORE_ARGS[@]}"
+else
+  echo
+  echo "No baseline prediction file at $BASELINE"
+fi
 
-echo
-echo "=== OPEN LOOPS ==="
-python3 evals/score_calibrated.py "$SKILL" "${SCORE_ARGS[@]}"
+if [[ -f "$SKILL" ]]; then
+  echo
+  echo "=== OPEN LOOPS ==="
+  python3 evals/score_calibrated.py "$SKILL" "${SCORE_ARGS[@]}"
+else
+  echo
+  echo "No Open Loops prediction file at $SKILL"
+fi
 
-echo
-echo "=== PER-CASE COMPARISON ==="
-python3 evals/compare_predictions.py "$BASELINE" "$SKILL"
+if [[ -f "$BASELINE" && -f "$SKILL" ]]; then
+  echo
+  echo "=== PER-CASE COMPARISON ==="
+  python3 evals/compare_predictions.py "$BASELINE" "$SKILL"
+fi
 
 echo
 echo "Predictions and raw outputs are in $OUT_DIR"
