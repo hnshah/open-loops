@@ -23,3 +23,19 @@ Requirements:
 The wrapper runs only the other 52 cases per condition, merges the two non-overlapping sets, verifies that each merged prediction file contains 64 cases, then scores and compares the full benchmark.
 
 This saves 24 Claude calls while preserving the same 64-case comparison when the frozen hard-smoke conditions are genuinely reusable.
+
+## Resume an interrupted run
+
+If Claude authentication, rate limits, malformed output, or another transient problem interrupts a long run, preserve the partial output directory and rerun with `RESUME=1`:
+
+```bash
+OUT_DIR=/tmp/open-loops-full-v021 \
+REUSE_HARD=1 \
+RESUME=1 \
+CLAUDE_MODEL=opus \
+bash evals/run_claude_compare.sh
+```
+
+The runner validates and keeps completed predictions, removes raw records for failed attempts that never produced a prediction, and calls Claude only for unfinished cases. If the baseline remainder is already complete on a later retry, it is skipped and the skill remainder continues from its own checkpoint.
+
+The blind runner also normalizes a bare source-ID string such as `"m1"` inside `main` or `watching` to the equivalent `{"anchor":"m1"}`. This tolerates a narrow JSON-shape deviation without changing the model's semantic judgment or accepting unknown source IDs.
